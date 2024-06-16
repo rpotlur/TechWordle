@@ -1,0 +1,63 @@
+const WORD = 'HELLO'; // You can change this to any 5-letter word
+let currentGuess = '';
+let attempts = 0;
+
+document.addEventListener('DOMContentLoaded', () => {
+    createBoard();
+    createKeyboard();
+});
+
+function createBoard() {
+    const gameBoard = document.getElementById('game-board');
+    for (let i = 0; i < 30; i++) { // 6 attempts x 5 letters
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        gameBoard.appendChild(cell);
+    }
+}
+
+function createKeyboard() {
+    const keyboard = document.getElementById('keyboard');
+    const keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    keys.forEach(key => {
+        const keyButton = document.createElement('button');
+        keyButton.className = 'key';
+        keyButton.textContent = key;
+        keyButton.onclick = () => handleKeyPress(key);
+        keyboard.appendChild(keyButton);
+    });
+}
+
+function handleKeyPress(key) {
+    if (currentGuess.length < 5) {
+        currentGuess += key;
+    }
+
+    if (currentGuess.length === 5) {
+        checkGuess();
+    }
+}
+
+function checkGuess() {
+    const guessArray = currentGuess.split('');
+    const boardCells = document.querySelectorAll('.cell');
+    const startIndex = attempts * 5;
+    guessArray.forEach((letter, index) => {
+        const cell = boardCells[startIndex + index];
+        cell.textContent = letter;
+        if (WORD[index] === letter) {
+            cell.classList.add('correct');
+        } else if (WORD.includes(letter)) {
+            cell.classList.add('present');
+        } else {
+            cell.classList.add('absent');
+        }
+    });
+
+    attempts++;
+    currentGuess = '';
+
+    if (attempts === 6) {
+        alert('Game Over!');
+    }
+}
